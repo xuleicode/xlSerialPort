@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/in.ico</file>
+        <file>images/myico.ico</file>
+        <file alias="Action/comwid">images/com.png</file>
+        <file>images/FileNew.png</file>
+        <file alias="Action/FileOpen">images/FileOpen.png</file>
+        <file alias="Action/FileSave">images/FileSave.png</file>
+        <file alias="Action/plotwid">images/plot.png</file>
+        <file alias="Action/About">images/question.png</file>
+        <file alias="Action/ToolBar1">images/toolbar.png</file>
+    </qresource>
+</RCC>

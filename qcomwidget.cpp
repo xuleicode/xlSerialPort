@@ -316,7 +316,7 @@ void QComWidget::Read_Data()
 	if (serial->bytesAvailable() <= 0) {
 		return;
 	}
-	myHelper::sleep(10);//ÑÓ³Ù10ºÁÃë
+	//myHelper::sleep(10);//ÑÓ³Ù10ºÁÃë
 
 	m_tempBuf = serial->readAll();
 	if(!m_tempBuf.isEmpty())

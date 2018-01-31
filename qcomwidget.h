@@ -43,8 +43,8 @@
 #include <QTimer>
 typedef struct
 {
-	int n1;
 	float f1;
+	float f2;
 }ReceiveDataStruct,*pReceiveDataStruct;
 Q_DECLARE_METATYPE(ReceiveDataStruct);
 Q_DECLARE_METATYPE(pReceiveDataStruct);
@@ -98,13 +98,16 @@ public:
 
 	QTimer * m_pTimer;
 private:
+	QByteArray m_receiveBuf;
+	QByteArray m_tempBuf;
+
 	void setupUi(QWidget*);
 	void retranslateUi(QWidget*);
 	void getSerialPortInfo();
 
 	void sendData();
 	void sendData(QString data);
-	void inline addtoQueue(pReceiveDataStruct);
+	inline void addtoQueue(pReceiveDataStruct);
 private slots:
 	void on_clearButton_clicked();
 	void on_sendButton_clicked();

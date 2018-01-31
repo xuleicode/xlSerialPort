@@ -301,12 +301,14 @@ void QComWidget::sendData(QString data)
 	} else {
 		buffer = myHelper::asciiStrToByteArray(data);
 	}
+	  
 
-	serial->write(buffer);
+	ReceiveDataStruct pdata;
+	pdata.f1=qrand()%5;//这两行发送随机数 测试使用
+	pdata.f2=qrand()%5;//这两行发送随机数 测试使用
 
-	double dsendData = data.toFloat();//测试使用
-	double dW = 1;//测试使用
-	emit addPoint(dsendData,dW);//发送信号 画图信息 幅度，频率
+	serial->write((const char*)&pdata,sizeof(pdata));
+	emit addPoint(pdata.f1,pdata.f2);//发送信号 画图信息 幅度，频率
 }
 //读取接收到的数据
 void QComWidget::Read_Data()
@@ -315,30 +317,28 @@ void QComWidget::Read_Data()
 		return;
 	}
 	myHelper::sleep(10);//延迟10毫秒
-	QByteArray buf;
-	buf = serial->readAll();
-	if(!buf.isEmpty())
+
+	m_tempBuf = serial->readAll();
+	if(!m_tempBuf.isEmpty())
 	{
+		m_receiveBuf.append(m_tempBuf);
 		QString strbuf;
 		if (ckHexReceive->isChecked()) {
-			strbuf = myHelper::byteArrayToHexStr(buf);
+			strbuf = myHelper::byteArrayToHexStr(m_tempBuf);
 		} else {
-			strbuf = myHelper::byteArrayToAsciiStr(buf);
+			strbuf = myHelper::byteArrayToAsciiStr(m_tempBuf);
 		}
-
-
-		//QString str = textEdit->toPlainText();
-		//str+=strbuf;
-		//textEdit->clear();
-		//str.append("\n");
 		textEdit->append(strbuf);
 		//要处理的数据
-		pReceiveDataStruct pdata = new ReceiveDataStruct;
-		pdata->n1=strbuf.toInt();
-		pdata->f1=strbuf.toFloat();
-		addtoQueue(pdata);
+		if (m_receiveBuf.size()>=sizeof(ReceiveDataStruct))
+		{
+			pReceiveDataStruct pdata = new ReceiveDataStruct;
+			memcpy(pdata,m_receiveBuf.data(),sizeof(ReceiveDataStruct));
+			addtoQueue(pdata);
+			m_receiveBuf.remove(0,sizeof(ReceiveDataStruct));
+		}
+		m_tempBuf.clear();
 	}
-	buf.clear();
 }
 void QComWidget::on_openButton_clicked()
 {
@@ -433,12 +433,7 @@ void QComWidget::addtoQueue(pReceiveDataStruct p)
 }
 void QComWidget::autosend()
 {
-	double ptLow = qrand()%5;		  //这两行发送随机数 测试使用
-	sendData(QString::number(ptLow)); //这两行发送随机数 测试使用
-
-	//sendData();//自动发送信息   非测试使用，一直发送发送框内的内容
-
-
+	sendData();//自动发送信息   非测试使用，一直发送发送框内的内容
 	//if (!ckAutoSend->isChecked())
 	//{
 	//	m_pTimer->stop();
@@ -458,7 +453,7 @@ void ParseData::run()
 			queueIsNotEmpty.wait(&mutex);		
 		pReceiveDataStruct pdata = queue.dequeue();
 		mutex.unlock();
-		emit addPoint(pdata->f1,pdata->n1);
+		emit addPoint(pdata->f1,pdata->f2);
 		delete pdata;
 	}
 }

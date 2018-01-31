@@ -104,7 +104,7 @@ private:
 
 	void sendData();
 	void sendData(QString data);
-	void addtoQueue(pReceiveDataStruct);
+	void inline addtoQueue(pReceiveDataStruct);
 private slots:
 	void on_clearButton_clicked();
 	void on_sendButton_clicked();

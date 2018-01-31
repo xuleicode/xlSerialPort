@@ -327,11 +327,11 @@ void QComWidget::Read_Data()
 		}
 
 
-		QString str = textEdit->toPlainText();
-		str+=strbuf;
-		textEdit->clear();
-		str.append("\n");
-		textEdit->append(str);
+		//QString str = textEdit->toPlainText();
+		//str+=strbuf;
+		//textEdit->clear();
+		//str.append("\n");
+		textEdit->append(strbuf);
 		//要处理的数据
 		pReceiveDataStruct pdata = new ReceiveDataStruct;
 		pdata->n1=strbuf.toInt();

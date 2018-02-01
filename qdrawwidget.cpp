@@ -472,3 +472,23 @@ void QDrawWidget::mouseMoveEvent(QMouseEvent *event)
 	}
 	return QWidget::mouseMoveEvent(event);
 }
+//»­Í¼ÇøÓò½ØÍ¼
+void QDrawWidget::ScreenShots()
+{
+	WId nwindId= plot1->winId();
+	int nwidth = plot1->frameGeometry().width();
+	int nheight = plot1->frameGeometry().height();
+	int nx= plot1->x();
+	int ny=plot1->y();
+
+	//QPixmap pm = QPixmap::grabWindow(qApp->desktop()->winId(), this->x()+2, this->y()+2, this->frameGeometry().width()-4, this->frameGeometry().height()-4);
+	QPixmap pm = QPixmap::grabWindow(nwindId, nx, ny, nwidth, nheight);
+
+	QDateTime current_time = QDateTime::currentDateTime();
+	QString fileName = current_time.toString("yyyy-MM-dd-HH-mm-ss")+".png";
+	QString str=qApp->applicationDirPath();
+	QFileInfo fi(str+"/"+fileName);
+	QString strpath = str+"/screenshot_"+fileName;
+	bool breturn = pm.save(strpath);
+	emit savelog("save screen shot to file:" + strpath);
+}

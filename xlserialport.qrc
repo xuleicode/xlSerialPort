@@ -9,5 +9,6 @@
         <file alias="Action/plotwid">images/plot.png</file>
         <file alias="Action/About">images/question.png</file>
         <file alias="Action/ToolBar1">images/toolbar.png</file>
+        <file alias="Action/screenshot">images/Screenshot.png</file>
     </qresource>
 </RCC>

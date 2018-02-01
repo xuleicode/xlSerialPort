@@ -26,6 +26,7 @@ xlSerialPort::xlSerialPort(QWidget *parent)
 	setupUI();
 	initThread();
 	initUI();
+	statusBar()->showMessage("Ready");
 }
 
 xlSerialPort::~xlSerialPort()
@@ -56,14 +57,22 @@ void xlSerialPort::setupUI()
 	AcToolBar1->setCheckable(true); 
 	connect(AcToolBar1,SIGNAL(triggered()),this,SLOT(ShowToolBar()));
 
-	AcComWid = new QAction(QIcon(":/Action/comwid"),tr("&SerialPortAsssist Widget"),this);
+	AcComWid = new QAction(QIcon(":/Action/comwid"),tr("&show/hide assist window"),this);
 	AcComWid->setShortcut(tr("Ctrl+Shift+S"));
+	AcComWid->setStatusTip("show/hide assist window");
 	AcComWid->setCheckable(true); 
 	connect(AcComWid,SIGNAL(triggered()),this,SLOT(ShowComWidget()));
-	AcPlotWid =  new QAction(QIcon(":/Action/plotwid"),tr("&Plot Widget"),this);
+	AcPlotWid =  new QAction(QIcon(":/Action/plotwid"),tr("&show/hide plot widget"),this);
 	AcPlotWid->setShortcut(tr("Ctrl+Shift+P"));
+	AcPlotWid->setStatusTip("show/hide plot widget");
 	AcPlotWid->setCheckable(true); 
 	connect(AcPlotWid,SIGNAL(triggered()),this,SLOT(ShowPlotWidget()));
+
+	AcScreenShot = new QAction(QIcon(":/Action/screenshot"),tr("&Screen Shot"),this);
+	AcScreenShot->setShortcut(tr("Ctrl+Shift+S"));
+	AcScreenShot->setStatusTip("make a screen shot for plot widget");
+	connect(AcScreenShot,SIGNAL(triggered()),this,SIGNAL(screenShot()));
+
 #pragma endregion Action
 
 #pragma region Menubar
@@ -76,6 +85,7 @@ void xlSerialPort::setupUI()
 	menuView->addAction(AcToolBar1);
 	menuView->addAction(AcComWid);
 	menuView->addAction(AcPlotWid);
+	menuView->addAction(AcScreenShot);
 
 	//menu help
 	QMenu *menuHelp = menuBar()->addMenu(tr("&Help")); 
@@ -87,19 +97,25 @@ void xlSerialPort::setupUI()
 	toolBar1 = addToolBar(tr("&toolbar"));
 	toolBar1->addAction(AcComWid);
 	toolBar1->addAction(AcPlotWid);
+	toolBar1->addAction(AcScreenShot);
 
 
 #pragma endregion ToolBar
 
 #pragma region StatusBar
-	statusMsg = new QLabel(tr("Ready"));
+	//statusMsg = new QLabel(tr("Ready"));
+	//statusMsg->setMinimumSize(statusMsg->sizeHint());
+	//statusMsg->setAlignment(Qt::AlignHCenter);
+	//statusMsg->setFrameShape(QFrame::WinPanel); // 设置标签形状
+	//statusMsg->setFrameShadow(QFrame::Sunken); // 设置标签阴影
+	//statusBar()->addWidget(statusMsg);
+
 	labelTime = new QLabel(tr("Time"));
 	m_pTimer = new QTimer(this);
 	m_pTimer->start(1000);
-	connect(m_pTimer,SIGNAL(timeout()),this,SLOT(timedisplay()));
-	statusBar()->addWidget(statusMsg);
+	connect(m_pTimer,SIGNAL(timeout()),this,SLOT(timedisplay()));	
 	statusBar()->setStyleSheet(QString("QStatusBar::item{border:0px}"));
-	//statusBar()->setSizeGripEnabled(0);
+	//statusBar()->setSizeGripEnabled(0);//右下角的大小控制点
 	statusBar()->addPermanentWidget(labelTime); //现实永久信息
 #pragma endregion StatusBar
 
@@ -158,6 +174,8 @@ void xlSerialPort::initUI()
 	ShowComWidget();
 	ShowToolBar();
 	ShowPlotWidget();
+	connect(this,&xlSerialPort::screenShot,m_drawWidget,&QDrawWidget::ScreenShots);
+	connect(m_drawWidget,&QDrawWidget::savelog,this,&xlSerialPort::showStatusMessage);
 }
 void xlSerialPort::initThread()
 {
@@ -195,13 +213,11 @@ void xlSerialPort::SetsystemTray()//托盘程序
 }
 void xlSerialPort::timedisplay()
 {
-//	QDateTime time = QDateTime::currentDateTime();//获取系统现在的时间
-//	QString str = time.toString("yyyy-MM-dd hh:mm:ss ddd"); //设置显示格式
-
-	QTime current_time = QTime::currentTime();
-	labelTime->setText(current_time.toString(" HH:mm:ss"));
-	//m_pTimer->start(1000);
-
+	QDateTime time = QDateTime::currentDateTime();//获取系统现在的时间
+	QString str = time.toString("yyyy-MM-dd hh:mm:ss ddd"); //设置显示格式
+	labelTime->setText(str);
+//	QTime current_time = QTime::currentTime();
+//	labelTime->setText(current_time.toString(" HH:mm:ss"));
 }
 void xlSerialPort::ShowComWidget()
 {
@@ -217,10 +233,12 @@ void xlSerialPort::ShowPlotWidget()
 	if(AcPlotWid->isChecked())
 	{
 		dockGraph1->show();
+		emit showStatusMessage("show plot widget");
 	}
 	else
 	{
 		dockGraph1->hide();
+		emit showStatusMessage("hide plot widget");
 	}
 }
 void xlSerialPort::setShowDockeComPropertyCheck(bool bshow)
@@ -230,6 +248,7 @@ void xlSerialPort::setShowDockeComPropertyCheck(bool bshow)
 void xlSerialPort::setShowDockeGraph1PropertyCheck(bool bshow)
 {
 	AcPlotWid->setChecked(bshow);
+	AcScreenShot->setEnabled(bshow);
 	if (bshow)
 	{
 		//receive 画图
@@ -251,6 +270,10 @@ void xlSerialPort::ShowToolBar()
 		toolBar1->show();
 	else
 		toolBar1->hide();
+}
+void xlSerialPort::showStatusMessage(QString strMsg)
+{
+	statusBar()->showMessage(strMsg,2000);
 }
 void xlSerialPort::About()
 {

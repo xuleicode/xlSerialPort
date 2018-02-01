@@ -35,6 +35,7 @@ private:
 	QAction *AcToolBar1;
 	QAction *AcComWid;
 	QAction *AcPlotWid;
+	QAction *AcScreenShot;
 	//toolbar
 	QToolBar *toolBar1;
 	//label
@@ -65,6 +66,10 @@ private slots:
 	void About();
 	void setShowDockeGraph1PropertyCheck(bool);
 	void setShowDockeComPropertyCheck(bool);
+public slots:
+	void showStatusMessage(QString);
+signals:
+	void screenShot();
 };
 
 #endif // XLSERIALPORT_H

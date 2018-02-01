@@ -19,6 +19,7 @@ public:
 public slots:
 	void plotPoint(double dA,double dW);
 	void plotSendPoint(double dA,double dW);
+	void ScreenShots();
 private slots:
 	void LoadPlot1();
 	void on_btnAdd_clicked();
@@ -94,6 +95,7 @@ private:
 	void InitData(QString strtitle = "NULL");
 signals:
 	void addOutput(QString strlog,int nicon = 0,int nWindow = 0);
+	void savelog(QString);
 
 };
 #endif // QDRAWWIDGET_H

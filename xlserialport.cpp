@@ -111,12 +111,16 @@ void xlSerialPort::setupUI()
 	dockGraph1->setAllowedAreas( Qt::AllDockWidgetAreas);
 	m_drawWidget = new QDrawWidget();
 	dockGraph1->setWidget(m_drawWidget); 
+	//dockGraph1->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
+	connect(dockGraph1,SIGNAL(visibilityChanged(bool)),this,SLOT(setShowDockeGraph1PropertyCheck(bool)));
 
 	dockCom =new QDockWidget(tr("SerialPortAssist"), this ); 
 	dockCom->setFeatures( QDockWidget::AllDockWidgetFeatures ); 
 	dockCom->setAllowedAreas( Qt::AllDockWidgetAreas);
 	m_comWidget = new QComWidget();
 	dockCom->setWidget(m_comWidget);
+	//dockCom->setFeatures(QDockWidget::DockWidgetMovable);
+	connect(dockCom,SIGNAL(visibilityChanged(bool)),this,SLOT(setShowDockeComPropertyCheck(bool)));
 
 	addDockWidget( Qt::RightDockWidgetArea, dockGraph1);//右
 	addDockWidget( Qt::LeftDockWidgetArea, dockCom);//左
@@ -160,6 +164,7 @@ void xlSerialPort::initThread()
 	//receive 画图
 	m_parseData = new ParseData();
 	m_parseData->start();
+
 }
 
 void xlSerialPort::SetsystemTray()//托盘程序
@@ -212,6 +217,21 @@ void xlSerialPort::ShowPlotWidget()
 	if(AcPlotWid->isChecked())
 	{
 		dockGraph1->show();
+	}
+	else
+	{
+		dockGraph1->hide();
+	}
+}
+void xlSerialPort::setShowDockeComPropertyCheck(bool bshow)
+{
+	AcComWid->setChecked(bshow);
+}
+void xlSerialPort::setShowDockeGraph1PropertyCheck(bool bshow)
+{
+	AcPlotWid->setChecked(bshow);
+	if (bshow)
+	{
 		//receive 画图
 		connect(m_parseData,&ParseData::addPoint,m_drawWidget,&QDrawWidget::plotPoint);	
 		connect(m_comWidget,&QComWidget::addPoint,m_drawWidget,&QDrawWidget::plotSendPoint);
@@ -219,7 +239,6 @@ void xlSerialPort::ShowPlotWidget()
 	else
 	{
 		//画图太频繁影响计算机性能，当画图窗口隐藏时，断开连接，不画图，等显示的时候再进行连接画图。
-		dockGraph1->hide();
 		//receive 画图
 		disconnect(m_parseData,&ParseData::addPoint,m_drawWidget,&QDrawWidget::plotPoint);
 		//send 画图

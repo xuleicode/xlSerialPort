@@ -63,6 +63,8 @@ private slots:
 	void ShowPlotWidget();
 	void ShowToolBar();
 	void About();
+	void setShowDockeGraph1PropertyCheck(bool);
+	void setShowDockeComPropertyCheck(bool);
 };
 
 #endif // XLSERIALPORT_H

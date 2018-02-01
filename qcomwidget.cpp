@@ -29,7 +29,7 @@ void QComWidget::setupUi(QWidget *pWidget)
 		pWidget->setObjectName(QStringLiteral("MainWindow"));
 	horizontalLayout_7 = new QHBoxLayout(pWidget);
 	horizontalLayout_7->setSpacing(6);
-	horizontalLayout_7->setContentsMargins(11, 11, 11, 11);
+	horizontalLayout_7->setContentsMargins(5, 5, 5, 5);
 	horizontalLayout_7->setObjectName(QStringLiteral("horizontalLayout_7"));
 	verticalLayout = new QVBoxLayout();
 	verticalLayout->setSpacing(6);

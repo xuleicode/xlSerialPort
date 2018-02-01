@@ -127,17 +127,20 @@ void QDrawWidget::initUI()
 	btnLayout->setMargin(0);
 	btnLayout->addStretch();
 	
-	//btnLayout->addWidget(btnAdd);
-	//btnLayout->addWidget(btnReset);
+	btnLayout->addWidget(btnAdd);
+	btnAdd->hide();
+	btnLayout->addWidget(btnReset);
+	btnReset->hide();
 	btnLayout->addWidget(btnResetAxes);
 	btnLayout->addWidget(btnBackg);
 	btnLayout->addWidget(btnLegend);
-	//btnLayout->addWidget(btnMove);
+	btnLayout->addWidget(btnMove);
+	btnAdd->hide();
 	btnLayout->addWidget(lableRangeZoom);
 	btnLayout->addWidget(cmbBox);
 	QVBoxLayout *centerLayout = new QVBoxLayout();
 	centerLayout->setMargin(0);
-	centerLayout->setContentsMargins(0,0,0,0);
+	centerLayout->setContentsMargins(5,0,5,5);
 	centerLayout->addWidget(plot1);
 	centerLayout->addLayout(btnLayout);
 	this->setLayout(centerLayout);
